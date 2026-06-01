@@ -20,12 +20,11 @@ enum tap_dance_codes {
   DANCE_0,
 };
 
-#define DUAL_FUNC_0 LT(14, KC_Z)
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT_voyager(
     KC_GRAVE,       KC_1,           KC_2,           KC_3,           KC_4,           KC_5,                                           KC_6,           KC_7,           KC_8,           KC_9,           KC_0,           KC_MINUS,       
-    KC_TAB,         KC_Q,           LT(5, KC_W),    DUAL_FUNC_0,    LT(7, KC_R),    KC_T,                                           KC_Y,           KC_U,           KC_I,           KC_O,           KC_P,           KC_BSLS,        
+    KC_TAB,         KC_Q,           LT(5, KC_W),    LT(8, KC_E),    LT(7, KC_R),    KC_T,                                           KC_Y,           KC_U,           KC_I,           KC_O,           KC_P,           KC_BSLS,        
     KC_ESCAPE,      MT(MOD_LGUI, KC_A),MT(MOD_LALT, KC_S),MT(MOD_LSFT, KC_D),MT(MOD_LCTL, KC_F),KC_G,                                           KC_H,           MT(MOD_RCTL, KC_J),MT(MOD_RSFT, KC_K),MT(MOD_RALT, KC_L),MT(MOD_RGUI, KC_SCLN),KC_QUOTE,       
     KC_TRANSPARENT, LT(6, KC_Z),    KC_X,           KC_C,           LT(4, KC_V),    KC_B,                                           KC_N,           KC_M,           KC_COMMA,       KC_DOT,         LT(6, KC_SLASH),KC_EQUAL,       
                                                     LT(1, KC_SPACE),LT(1, KC_BSPC),                                 LT(2, KC_ENTER),KC_SPACE
@@ -93,28 +92,26 @@ const uint16_t PROGMEM combo0[] = { LT(6, KC_Z), KC_X, COMBO_END};
 const uint16_t PROGMEM combo1[] = { KC_X, KC_C, COMBO_END};
 const uint16_t PROGMEM combo2[] = { KC_C, LT(4, KC_V), COMBO_END};
 const uint16_t PROGMEM combo3[] = { LT(4, KC_V), KC_B, COMBO_END};
-const uint16_t PROGMEM combo4[] = { DUAL_FUNC_0, LT(7, KC_R), COMBO_END};
-const uint16_t PROGMEM combo5[] = { MT(MOD_LCTL, KC_F), MT(MOD_RCTL, KC_J), COMBO_END};
-const uint16_t PROGMEM combo6[] = { MT(MOD_LSFT, KC_D), MT(MOD_RSFT, KC_K), COMBO_END};
-const uint16_t PROGMEM combo7[] = { MT(MOD_LALT, KC_S), MT(MOD_LSFT, KC_D), COMBO_END};
-const uint16_t PROGMEM combo8[] = { MT(MOD_RSFT, KC_K), MT(MOD_RALT, KC_L), COMBO_END};
-const uint16_t PROGMEM combo9[] = { DUAL_FUNC_0, LT(7, KC_R), COMBO_END};
-const uint16_t PROGMEM combo10[] = { MT(MOD_LGUI, KC_A), MT(MOD_LALT, KC_S), COMBO_END};
-const uint16_t PROGMEM combo11[] = { LT(5, KC_W), DUAL_FUNC_0, COMBO_END};
+const uint16_t PROGMEM combo4[] = { MT(MOD_LCTL, KC_F), MT(MOD_RCTL, KC_J), COMBO_END};
+const uint16_t PROGMEM combo5[] = { MT(MOD_LSFT, KC_D), MT(MOD_RSFT, KC_K), COMBO_END};
+const uint16_t PROGMEM combo6[] = { MT(MOD_LALT, KC_S), MT(MOD_LSFT, KC_D), COMBO_END};
+const uint16_t PROGMEM combo7[] = { MT(MOD_RSFT, KC_K), MT(MOD_RALT, KC_L), COMBO_END};
+const uint16_t PROGMEM combo8[] = { LT(7, KC_R), KC_3, COMBO_END};
+const uint16_t PROGMEM combo9[] = { MT(MOD_LGUI, KC_A), MT(MOD_LALT, KC_S), COMBO_END};
+const uint16_t PROGMEM combo10[] = { LT(5, KC_W), KC_3, COMBO_END};
 
 combo_t key_combos[COMBO_COUNT] = {
     COMBO(combo0, LGUI(KC_Z)),
     COMBO(combo1, RGUI(KC_X)),
     COMBO(combo2, RGUI(KC_C)),
     COMBO(combo3, RGUI(KC_V)),
-    COMBO(combo4, RGUI(RCTL(KC_F19))),
-    COMBO(combo5, KC_ENTER),
-    COMBO(combo6, LALT(LGUI(LCTL(KC_G)))),
-    COMBO(combo7, KC_ESCAPE),
-    COMBO(combo8, RALT(RGUI(RCTL(RSFT(KC_M))))),
-    COMBO(combo9, KC_F19),
-    COMBO(combo10, KC_ENTER),
-    COMBO(combo11, KC_BSPC),
+    COMBO(combo4, KC_ENTER),
+    COMBO(combo5, LALT(LGUI(LCTL(KC_G)))),
+    COMBO(combo6, KC_ESCAPE),
+    COMBO(combo7, RALT(RGUI(RCTL(RSFT(KC_M))))),
+    COMBO(combo8, KC_F19),
+    COMBO(combo9, KC_ENTER),
+    COMBO(combo10, KC_BSPC),
 };
 
 
@@ -282,21 +279,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     }
     break;
 
-    case DUAL_FUNC_0:
-      if (record->tap.count > 0) {
-        if (record->event.pressed) {
-          register_code16(KC_E);
-        } else {
-          unregister_code16(KC_E);
-        }
-      } else {
-        if (record->event.pressed) {
-          register_code16(KC_F15);
-        } else {
-          unregister_code16(KC_F15);
-        }  
-      }  
-      return false;
     case RGB_SLD:
       if (record->event.pressed) {
         rgblight_mode(1);
