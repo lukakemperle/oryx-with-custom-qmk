@@ -97,9 +97,9 @@ const uint16_t PROGMEM combo4[] = { MT(MOD_LCTL, KC_F), MT(MOD_RCTL, KC_J), COMB
 const uint16_t PROGMEM combo5[] = { MT(MOD_LSFT, KC_D), MT(MOD_RSFT, KC_K), COMBO_END};
 const uint16_t PROGMEM combo6[] = { MT(MOD_LALT, KC_S), MT(MOD_LSFT, KC_D), COMBO_END};
 const uint16_t PROGMEM combo7[] = { MT(MOD_RSFT, KC_K), MT(MOD_RALT, KC_L), COMBO_END};
-const uint16_t PROGMEM combo8[] = { LT(7, KC_R), LT(8, KC_E), COMBO_END};
+const uint16_t PROGMEM combo8[] = { LT(7, KC_R), E_L8, COMBO_END};
 const uint16_t PROGMEM combo9[] = { MT(MOD_LGUI, KC_A), MT(MOD_LALT, KC_S), COMBO_END};
-const uint16_t PROGMEM combo10[] = { LT(5, KC_W), LT(8, KC_E), COMBO_END};
+const uint16_t PROGMEM combo10[] = { LT(5, KC_W), E_L8, COMBO_END};
 
 combo_t key_combos[COMBO_COUNT] = {
     COMBO(combo0, LGUI(KC_Z)),
@@ -349,3 +349,4 @@ void matrix_scan_user(void) {
 // ============================================================
 // END CUSTOM QMK
 // ============================================================
+
