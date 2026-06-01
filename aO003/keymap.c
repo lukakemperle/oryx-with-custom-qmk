@@ -110,7 +110,7 @@ combo_t key_combos[COMBO_COUNT] = {
     COMBO(combo5, LALT(LGUI(LCTL(KC_G)))),
     COMBO(combo6, KC_ESCAPE),
     COMBO(combo7, RALT(RGUI(RCTL(RSFT(KC_M))))),
-    COMBO(combo8, KC_F19),
+    COMBO(combo8, LGUI(LCTL(KC_F19))),
     COMBO(combo9, KC_ENTER),
     COMBO(combo10, KC_BSPC),
 };
