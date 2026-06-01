@@ -323,9 +323,10 @@ bool process_record_user_custom(uint16_t keycode, keyrecord_t *record) {
                 e_l8_timer      = timer_read();
             } else {
                 if (e_l8_registered) {
-                    // was a hold — release F15 and layer
+                    // was a hold — release F15, layer, then tap Escape
                     unregister_code(KC_F15);
                     layer_off(8);
+                    tap_code(KC_ESCAPE);
                     e_l8_registered = false;
                 } else {
                     // was a tap — send E
