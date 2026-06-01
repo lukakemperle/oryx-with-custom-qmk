@@ -12,6 +12,7 @@ enum custom_keycodes {
   ST_MACRO_2,
   ST_MACRO_3,
   ST_MACRO_4,
+  E_L8,
 };
 
 
@@ -24,7 +25,7 @@ enum tap_dance_codes {
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT_voyager(
     KC_GRAVE,       KC_1,           KC_2,           KC_3,           KC_4,           KC_5,                                           KC_6,           KC_7,           KC_8,           KC_9,           KC_0,           KC_MINUS,       
-    KC_TAB,         KC_Q,           LT(5, KC_W),    LT(8, KC_E),    LT(7, KC_R),    KC_T,                                           KC_Y,           KC_U,           KC_I,           KC_O,           KC_P,           KC_BSLS,        
+    KC_TAB,         KC_Q,           LT(5, KC_W),    E_L8,           LT(7, KC_R),    KC_T,                                           KC_Y,           KC_U,           KC_I,           KC_O,           KC_P,           KC_BSLS,        
     KC_ESCAPE,      MT(MOD_LGUI, KC_A),MT(MOD_LALT, KC_S),MT(MOD_LSFT, KC_D),MT(MOD_LCTL, KC_F),KC_G,                                           KC_H,           MT(MOD_RCTL, KC_J),MT(MOD_RSFT, KC_K),MT(MOD_RALT, KC_L),MT(MOD_RGUI, KC_SCLN),KC_QUOTE,       
     KC_TRANSPARENT, LT(6, KC_Z),    KC_X,           KC_C,           LT(4, KC_V),    KC_B,                                           KC_N,           KC_M,           KC_COMMA,       KC_DOT,         LT(6, KC_SLASH),KC_EQUAL,       
                                                     LT(1, KC_SPACE),LT(1, KC_BSPC),                                 LT(2, KC_ENTER),KC_SPACE
@@ -80,7 +81,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
   [8] = LAYOUT_voyager(
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, 
-    KC_TRANSPARENT, KC_Q,           KC_W,           KC_F15,         KC_R,           KC_T,                                           KC_Y,           KC_U,           KC_F15,         KC_O,           KC_P,           KC_TRANSPARENT, 
+    KC_TRANSPARENT, KC_Q,           KC_W,           KC_TRANSPARENT, KC_R,           KC_T,                                           KC_Y,           KC_U,           KC_F15,         KC_O,           KC_P,           KC_TRANSPARENT, 
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_H,           KC_J,           KC_K,           KC_L,           KC_F15,         KC_QUOTE,       
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_B,                                           KC_N,           KC_M,           KC_COMMA,       KC_DOT,         KC_SLASH,       KC_TRANSPARENT, 
                                                     KC_SPACE,       KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT
@@ -235,7 +236,7 @@ tap_dance_action_t tap_dance_actions[] = {
         [DANCE_0] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, dance_0_finished, dance_0_reset),
 };
 
-bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+bool process_record_user_oryx(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
   case QK_MODS ... QK_MODS_MAX:
     // Mouse and consumer keys (volume, media) with modifiers work inconsistently across operating systems,
@@ -288,3 +289,62 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   return true;
 }
 
+
+
+
+// ============================================================
+// CUSTOM QMK — do not edit above this line with Oryx changes
+// ============================================================
+
+// E_L8: tap = E, hold = activate layer 8 + hold KC_F15
+// Layer 8 (MSLS) is fully managed by Oryx; this code adds
+// the F15 side-effect without touching the keymap array.
+
+static bool     e_l8_held       = false;
+static bool     e_l8_registered = false;
+static uint16_t e_l8_timer      = 0;
+
+// Override process_record_user — custom block appended below existing one.
+// QMK calls this once; we extend it by handling E_L8 before the existing switch.
+
+bool process_record_user_custom(uint16_t keycode, keyrecord_t *record);
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    if (!process_record_user_custom(keycode, record)) return false;
+    return process_record_user_oryx(keycode, record);
+}
+
+bool process_record_user_custom(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case E_L8:
+            if (record->event.pressed) {
+                e_l8_held       = true;
+                e_l8_registered = false;
+                e_l8_timer      = timer_read();
+            } else {
+                if (e_l8_registered) {
+                    // was a hold — release F15 and layer
+                    unregister_code(KC_F15);
+                    layer_off(8);
+                    e_l8_registered = false;
+                } else {
+                    // was a tap — send E
+                    tap_code(KC_E);
+                }
+                e_l8_held = false;
+            }
+            return false;
+    }
+    return true;
+}
+
+void matrix_scan_user(void) {
+    if (e_l8_held && !e_l8_registered && timer_elapsed(e_l8_timer) > TAPPING_TERM) {
+        e_l8_registered = true;
+        layer_on(8);
+        register_code(KC_F15);
+    }
+}
+// ============================================================
+// END CUSTOM QMK
+// ============================================================
