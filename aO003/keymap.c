@@ -352,29 +352,33 @@ void matrix_scan_user(void) {
         layer_on(8);
         register_code(KC_F15);
     }
+    if (kl_l9_send_show) {
+        kl_l9_send_show = false;
+        tap_code16(LALT(KC_F15));
+    }
     if (kl_l9_send_hide) {
         kl_l9_send_hide = false;
-        tap_code16(LALT(LCTL(LSFT(LGUI(KC_F16)))));
+        tap_code16(LALT(LSFT(KC_F15)));
     }
 }
 
-// KL_L9: combo KL (MT_RSFT_K + MT_RALT_L) toggles layer 9.
-// Shift+F15 is registered whenever layer 9 is active and unregistered
-// whenever it turns off — regardless of how it was exited (combo re-press
-// or TO(0) on the layer itself).
+// KL_L9: combo KL toggles layer 9.
+// Opt+F15 = show overlay (Mouseless shortcut).
+// Opt+Shift+F15 = hide overlay (Mouseless shortcut).
+// Taps are deferred to matrix_scan_user so layer_state_set_user stays side-effect free.
 
-static bool kl_l9_f15_active  = false;
-static bool kl_l9_send_hide   = false;
+static bool kl_l9_active    = false;
+static bool kl_l9_send_show = false;
+static bool kl_l9_send_hide = false;
 
 layer_state_t layer_state_set_user(layer_state_t state) {
     bool l9_now = (state >> 9) & 1;
-    if (l9_now && !kl_l9_f15_active) {
-        register_code16(S(KC_F15));
-        kl_l9_f15_active = true;
-    } else if (!l9_now && kl_l9_f15_active) {
-        unregister_code16(S(KC_F15));
-        kl_l9_send_hide  = true;
-        kl_l9_f15_active = false;
+    if (l9_now && !kl_l9_active) {
+        kl_l9_send_show = true;
+        kl_l9_active    = true;
+    } else if (!l9_now && kl_l9_active) {
+        kl_l9_send_hide = true;
+        kl_l9_active    = false;
     }
     return state;
 }
