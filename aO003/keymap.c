@@ -353,7 +353,25 @@ void matrix_scan_user(void) {
         register_code(KC_F15);
     }
 }
+
+// KL_L9: combo KL (MT_RSFT_K + MT_RALT_L) toggles layer 9.
+// Shift+F15 is registered whenever layer 9 is active and unregistered
+// whenever it turns off — regardless of how it was exited (combo re-press
+// or TO(0) on the layer itself).
+
+static bool kl_l9_f15_active = false;
+
+layer_state_t layer_state_set_user(layer_state_t state) {
+    bool l9_now = (state >> 9) & 1;
+    if (l9_now && !kl_l9_f15_active) {
+        register_code16(S(KC_F15));
+        kl_l9_f15_active = true;
+    } else if (!l9_now && kl_l9_f15_active) {
+        unregister_code16(S(KC_F15));
+        kl_l9_f15_active = false;
+    }
+    return state;
+}
 // ============================================================
 // END CUSTOM QMK
 // ============================================================
-
