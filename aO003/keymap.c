@@ -346,6 +346,15 @@ bool process_record_user_custom(uint16_t keycode, keyrecord_t *record) {
     return true;
 }
 
+// KL_L9: combo KL toggles layer 9.
+// Opt+F15 = show overlay (Mouseless shortcut).
+// Opt+Shift+F15 = hide overlay (Mouseless shortcut).
+// Taps are deferred to matrix_scan_user so layer_state_set_user stays side-effect free.
+
+static bool kl_l9_active    = false;
+static bool kl_l9_send_show = false;
+static bool kl_l9_send_hide = false;
+
 void matrix_scan_user(void) {
     if (e_l8_held && !e_l8_registered && timer_elapsed(e_l8_timer) > TAPPING_TERM) {
         e_l8_registered = true;
@@ -361,15 +370,6 @@ void matrix_scan_user(void) {
         tap_code16(LALT(LSFT(KC_F15)));
     }
 }
-
-// KL_L9: combo KL toggles layer 9.
-// Opt+F15 = show overlay (Mouseless shortcut).
-// Opt+Shift+F15 = hide overlay (Mouseless shortcut).
-// Taps are deferred to matrix_scan_user so layer_state_set_user stays side-effect free.
-
-static bool kl_l9_active    = false;
-static bool kl_l9_send_show = false;
-static bool kl_l9_send_hide = false;
 
 layer_state_t layer_state_set_user(layer_state_t state) {
     bool l9_now = (state >> 9) & 1;
