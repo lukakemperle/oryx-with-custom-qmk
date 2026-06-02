@@ -363,11 +363,11 @@ void matrix_scan_user(void) {
     }
     if (kl_l9_send_show) {
         kl_l9_send_show = false;
-        tap_code16(LALT(KC_F15));
+        tap_code16(LALT(KC_F16));
     }
     if (kl_l9_send_hide) {
         kl_l9_send_hide = false;
-        tap_code16(LALT(LSFT(KC_F15)));
+        tap_code16(LALT(LSFT(KC_F16)));
     }
 }
 
