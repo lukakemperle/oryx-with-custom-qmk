@@ -352,6 +352,10 @@ void matrix_scan_user(void) {
         layer_on(8);
         register_code(KC_F15);
     }
+    if (kl_l9_send_hide) {
+        kl_l9_send_hide = false;
+        tap_code16(LALT(LCTL(LSFT(LGUI(KC_F16)))));
+    }
 }
 
 // KL_L9: combo KL (MT_RSFT_K + MT_RALT_L) toggles layer 9.
@@ -359,7 +363,8 @@ void matrix_scan_user(void) {
 // whenever it turns off — regardless of how it was exited (combo re-press
 // or TO(0) on the layer itself).
 
-static bool kl_l9_f15_active = false;
+static bool kl_l9_f15_active  = false;
+static bool kl_l9_send_hide   = false;
 
 layer_state_t layer_state_set_user(layer_state_t state) {
     bool l9_now = (state >> 9) & 1;
@@ -368,6 +373,7 @@ layer_state_t layer_state_set_user(layer_state_t state) {
         kl_l9_f15_active = true;
     } else if (!l9_now && kl_l9_f15_active) {
         unregister_code16(S(KC_F15));
+        kl_l9_send_hide  = true;
         kl_l9_f15_active = false;
     }
     return state;
