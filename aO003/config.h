@@ -10,7 +10,6 @@
 
 #define SERIAL_NUMBER "aO003/gaLDwe"
 #define LAYER_STATE_16BIT
-#define COMBO_COUNT 11
+#define COMBO_COUNT 12
 
 #define RGB_MATRIX_STARTUP_SPD 60
-
