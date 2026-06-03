@@ -21,8 +21,8 @@ enum tap_dance_codes {
   DANCE_1,
 };
 
-#define DUAL_FUNC_0 LT(14, KC_H)
-#define DUAL_FUNC_1 LT(3, KC_F19)
+#define DUAL_FUNC_0 LT(3, KC_F11)
+#define DUAL_FUNC_1 LT(15, KC_F14)
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT_voyager(
@@ -98,7 +98,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [10] = LAYOUT_voyager(
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, 
     KC_TRANSPARENT, RSFT(KC_Q),     RSFT(KC_W),     RSFT(KC_E),     RSFT(KC_R),     RSFT(KC_T),                                     LSFT(KC_Y),     LSFT(KC_U),     RSFT(KC_I),     LSFT(KC_O),     LSFT(KC_P),     KC_TRANSPARENT, 
-    TO(0),          RSFT(KC_A),     RSFT(KC_A),     DUAL_FUNC_0,    RSFT(KC_F),     RSFT(KC_G),                                     LSFT(KC_H),     LSFT(KC_J),     DUAL_FUNC_1,    LSFT(KC_L),     KC_TRANSPARENT, KC_TRANSPARENT, 
+    TO(0),          RSFT(KC_A),     RSFT(KC_S),     DUAL_FUNC_0,    RSFT(KC_F),     RSFT(KC_G),                                     LSFT(KC_H),     LSFT(KC_J),     DUAL_FUNC_1,    LSFT(KC_L),     KC_TRANSPARENT, KC_TRANSPARENT, 
     KC_TRANSPARENT, RSFT(KC_Z),     RSFT(KC_X),     RSFT(KC_C),     RSFT(KC_V),     RSFT(KC_B),                                     LSFT(KC_N),     LSFT(KC_M),     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, 
                                                     KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT
   ),
