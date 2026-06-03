@@ -42,10 +42,11 @@ kc = kc.replace(
 )
 
 # Patch 7: add dance_1 implementation before tap_dance_actions
+# Single tap sends U respecting Caps Word; double tap toggles Caps Word
 dance_1_impl = '''void dance_1_finished(tap_dance_state_t *state, void *user_data) {
     dance_state[1].step = dance_step(state);
     switch (dance_state[1].step) {
-        case SINGLE_TAP: register_code16(KC_U); break;
+        case SINGLE_TAP: register_code16(is_caps_word_on() ? S(KC_U) : KC_U); break;
         case DOUBLE_TAP: caps_word_toggle(); break;
     }
 }
@@ -53,7 +54,7 @@ dance_1_impl = '''void dance_1_finished(tap_dance_state_t *state, void *user_dat
 void dance_1_reset(tap_dance_state_t *state, void *user_data) {
     wait_ms(10);
     switch (dance_state[1].step) {
-        case SINGLE_TAP: unregister_code16(KC_U); break;
+        case SINGLE_TAP: unregister_code16(is_caps_word_on() ? S(KC_U) : KC_U); break;
     }
     dance_state[1].step = 0;
 }
