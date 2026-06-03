@@ -75,7 +75,71 @@ jobs:
         run: |
           git fetch origin main
           git checkout -B main origin/main
-          git merge -Xignore-all-space oryx
+
+          # Save the custom QMK section from main before touching anything
+          python3 -c "
+content = open('${{ github.event.inputs.layout_id }}/keymap.c').read()
+sep = '// ============================================================\n// CUSTOM QMK'
+idx = content.find(sep)
+open('/tmp/custom_section.txt', 'w').write('\n' + content[idx:] if idx >= 0 else '')
+"
+
+          # Build final keymap.c: oryx content + patches + custom section
+          python3 - << 'PYEOF'
+import re, subprocess
+
+lid = "${{ github.event.inputs.layout_id }}"
+
+# Get the fresh oryx-branch content (already committed above)
+oryx_kc = subprocess.check_output(['git', 'show', f'oryx:{lid}/keymap.c']).decode()
+
+# Patch 1: fix E_L8 combo references (Oryx always regenerates LT(8, KC_E))
+oryx_kc = oryx_kc.replace('LT(8, KC_E)', 'E_L8')
+
+# Patch 2: add combo11 (KC_K + KC_L -> TG(9)) for layer-9 exit
+oryx_kc = oryx_kc.replace(
+    'combo_t key_combos[COMBO_COUNT] = {',
+    'const uint16_t PROGMEM combo11[] = { KC_K, KC_L, COMBO_END};\n\ncombo_t key_combos[COMBO_COUNT] = {'
+)
+oryx_kc = oryx_kc.replace(
+    '    COMBO(combo10, KC_BSPC),\n};',
+    '    COMBO(combo10, KC_BSPC),\n    COMBO(combo11, TG(9)),\n};'
+)
+
+# Append our custom section
+custom = open('/tmp/custom_section.txt').read()
+oryx_kc = oryx_kc.rstrip() + custom
+
+open(f'{lid}/keymap.c', 'w').write(oryx_kc)
+print('keymap.c patched successfully')
+PYEOF
+
+          # Build final config.h: oryx content with COMBO_COUNT incremented by 1
+          python3 - << 'PYEOF'
+import re, subprocess
+
+lid = "${{ github.event.inputs.layout_id }}"
+oryx_cfg = subprocess.check_output(['git', 'show', f'oryx:{lid}/config.h']).decode()
+
+# Increment COMBO_COUNT by 1 to account for combo11
+oryx_cfg = re.sub(
+    r'#define COMBO_COUNT (\d+)',
+    lambda m: f'#define COMBO_COUNT {int(m.group(1)) + 1}',
+    oryx_cfg
+)
+
+open(f'{lid}/config.h', 'w').write(oryx_cfg)
+print('config.h patched successfully')
+PYEOF
+
+          # Also take oryx versions of the other files unchanged
+          git checkout oryx -- ${{ github.event.inputs.layout_id }}/rules.mk
+          git checkout oryx -- ${{ github.event.inputs.layout_id }}/keymap.json
+
+          git config --local user.name "github-actions"
+          git config --local user.email "github-actions@github.com"
+          git add ${{ github.event.inputs.layout_id }}/
+          git diff --cached --quiet || git commit -m "✨(merge): apply Oryx update + custom QMK patches"
           git push
 
       - name: Update QMK firmware submodule to latest version (${{ steps.download-layout-source.outputs.firmware_version }})
@@ -124,5 +188,3 @@ jobs:
         with:
           name: ${{ steps.build-layout.outputs.normalized_layout_geometry }}_${{ github.event.inputs.layout_id }}
           path: ${{ steps.build-layout.outputs.built_layout_file }}
-
-
