@@ -95,9 +95,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
   [10] = LAYOUT_voyager(
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, 
-    KC_TRANSPARENT, MT(MOD_RSFT, KC_Q),MT(MOD_RSFT, KC_W),MT(MOD_RSFT, KC_E),KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, 
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, 
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, 
+    KC_TRANSPARENT, MT(MOD_RSFT, KC_Q),MT(MOD_RSFT, KC_W),MT(MOD_RSFT, KC_E),MT(MOD_RSFT, KC_R),MT(MOD_RSFT, KC_T),                                MT(MOD_LSFT, KC_Y),MT(MOD_LSFT, KC_U),MT(MOD_LSFT, KC_I),MT(MOD_LSFT, KC_O),MT(MOD_LCTL, KC_P),KC_TRANSPARENT, 
+    KC_TRANSPARENT, MT(MOD_RSFT, KC_A),MT(MOD_RSFT, KC_S),MT(MOD_RSFT, KC_D),MT(MOD_RSFT, KC_F),MT(MOD_RSFT, KC_Z),                                MT(MOD_LSFT, KC_H),MT(MOD_LSFT, KC_J),MT(MOD_LSFT, KC_K),MT(MOD_LSFT, KC_L),KC_TRANSPARENT, KC_TRANSPARENT, 
+    KC_TRANSPARENT, MT(MOD_RSFT, KC_Z),MT(MOD_RSFT, KC_X),MT(MOD_RSFT, KC_C),MT(MOD_RSFT, KC_V),MT(MOD_RSFT, KC_B),                                MT(MOD_LSFT, KC_N),MT(MOD_LSFT, KC_M),KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, 
                                                     KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT
   ),
 };
@@ -130,12 +130,6 @@ combo_t key_combos[COMBO_COUNT] = {
 };
 
 
-bool capslock_active = false;
-
-bool led_update_user(led_t led_state) {
-  capslock_active = led_state.caps_lock;
-  return true;
-}
 
 extern rgb_config_t rgb_matrix_config;
 
@@ -210,10 +204,6 @@ bool rgb_matrix_indicators_user(void) {
     }
   }
 
-  if (capslock_active && biton32(layer_state) == 0) {
-    RGB rgb = hsv_to_rgb_with_value((HSV) { 91, 218, 204 });
-    rgb_matrix_set_color( 33, rgb.r, rgb.g, rgb.b );
-  } 
   return true;
 }
 
@@ -268,7 +258,7 @@ void dance_0_finished(tap_dance_state_t *state, void *user_data) {
     dance_state[0].step = dance_step(state);
     switch (dance_state[0].step) {
         case SINGLE_TAP: register_code16(KC_U); break;
-        case DOUBLE_TAP: register_code16(KC_CAPS); break;
+        case DOUBLE_TAP: layer_move(10); break;
         case DOUBLE_SINGLE_TAP: tap_code16(KC_U); register_code16(KC_U);
     }
 }
@@ -277,7 +267,6 @@ void dance_0_reset(tap_dance_state_t *state, void *user_data) {
     wait_ms(10);
     switch (dance_state[0].step) {
         case SINGLE_TAP: unregister_code16(KC_U); break;
-        case DOUBLE_TAP: unregister_code16(KC_CAPS); break;
         case DOUBLE_SINGLE_TAP: unregister_code16(KC_U); break;
     }
     dance_state[0].step = 0;
