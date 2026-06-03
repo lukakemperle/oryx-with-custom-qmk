@@ -392,73 +392,14 @@ bool process_record_user_oryx(uint16_t keycode, keyrecord_t *record) {
 // CUSTOM QMK — do not edit above this line with Oryx changes
 // ============================================================
 
-// E_L8: tap = E, hold = activate layer 8 + hold KC_F15
-// Layer 8 (MSLS) is fully managed by Oryx; this code adds
-// the F15 side-effect without touching the keymap array.
-
-static bool     e_l8_held       = false;
-static bool     e_l8_registered = false;
-static uint16_t e_l8_timer      = 0;
-
-// Override process_record_user — custom block appended below existing one.
-// QMK calls this once; we extend it by handling E_L8 before the existing switch.
-
-bool process_record_user_custom(uint16_t keycode, keyrecord_t *record);
-
-bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    if (!process_record_user_custom(keycode, record)) return false;
-    return process_record_user_oryx(keycode, record);
-}
-
-bool process_record_user_custom(uint16_t keycode, keyrecord_t *record) {
-    switch (keycode) {
-        case E_L8:
-            if (record->event.pressed) {
-                e_l8_held       = true;
-                e_l8_registered = false;
-                e_l8_timer      = timer_read();
-            } else {
-                if (e_l8_registered) {
-                    // was a hold — release F15, layer, then tap Escape
-                    unregister_code(KC_F15);
-                    layer_off(8);
-                    tap_code(KC_ESCAPE);
-                    e_l8_registered = false;
-                } else {
-                    // was a tap — send E
-                    tap_code(KC_E);
-                }
-                e_l8_held = false;
-            }
-            return false;
-    }
-    return true;
-}
-
 // KL_L9: combo KL toggles layer 9.
-// Opt+F15 = show overlay (Mouseless shortcut).
-// Opt+Shift+F15 = hide overlay (Mouseless shortcut).
+// Opt+F16 = show overlay (Mouseless shortcut).
+// Opt+Shift+F16 = hide overlay (Mouseless shortcut).
 // Taps are deferred to matrix_scan_user so layer_state_set_user stays side-effect free.
 
 static bool kl_l9_active    = false;
 static bool kl_l9_send_show = false;
 static bool kl_l9_send_hide = false;
-
-void matrix_scan_user(void) {
-    if (e_l8_held && !e_l8_registered && timer_elapsed(e_l8_timer) > TAPPING_TERM) {
-        e_l8_registered = true;
-        layer_on(8);
-        register_code(KC_F15);
-    }
-    if (kl_l9_send_show) {
-        kl_l9_send_show = false;
-        tap_code16(LALT(KC_F16));
-    }
-    if (kl_l9_send_hide) {
-        kl_l9_send_hide = false;
-        tap_code16(LALT(LSFT(KC_F16)));
-    }
-}
 
 layer_state_t layer_state_set_user(layer_state_t state) {
     bool l9_now = (state >> 9) & 1;
@@ -471,7 +412,17 @@ layer_state_t layer_state_set_user(layer_state_t state) {
     }
     return state;
 }
+
+void matrix_scan_user(void) {
+    if (kl_l9_send_show) {
+        kl_l9_send_show = false;
+        tap_code16(LALT(KC_F16));
+    }
+    if (kl_l9_send_hide) {
+        kl_l9_send_hide = false;
+        tap_code16(LALT(LSFT(KC_F16)));
+    }
+}
 // ============================================================
 // END CUSTOM QMK
 // ============================================================
-
