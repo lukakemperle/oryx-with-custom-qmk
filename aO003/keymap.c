@@ -19,14 +19,13 @@ enum custom_keycodes {
 
 enum tap_dance_codes {
   DANCE_0,
-  DANCE_1,
 };
 
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT_voyager(
     KC_GRAVE,       KC_1,           KC_2,           KC_3,           KC_4,           KC_5,                                           KC_6,           KC_7,           KC_8,           KC_9,           KC_0,           KC_MINUS,       
-    KC_TAB,         KC_Q,           LT(5, KC_W),    E_L8,    LT(7, KC_R),    KC_T,                                           KC_Y,           TD(DANCE_1),           KC_I,           KC_O,           KC_P,           KC_BSLS,        
+    KC_TAB,         KC_Q,           LT(5, KC_W),    E_L8,    LT(7, KC_R),    KC_T,                                           KC_Y,           KC_U,           KC_I,           KC_O,           KC_P,           KC_BSLS,        
     KC_ESCAPE,      MT(MOD_LGUI, KC_A),MT(MOD_LALT, KC_S),MT(MOD_LSFT, KC_D),MT(MOD_LCTL, KC_F),KC_G,                                           KC_H,           MT(MOD_RCTL, KC_J),MT(MOD_RSFT, KC_K),MT(MOD_RALT, KC_L),MT(MOD_RGUI, KC_SCLN),MT(MOD_RCTL | MOD_RSFT | MOD_LALT, KC_QUOTE),
     KC_TRANSPARENT, LT(6, KC_Z),    KC_X,           KC_C,           LT(4, KC_V),    KC_B,                                           KC_N,           KC_M,           KC_COMMA,       KC_DOT,         LT(6, KC_SLASH),KC_EQUAL,       
                                                     LT(1, KC_SPACE),LT(1, KC_BSPC),                                 LT(2, KC_ENTER),KC_SPACE
@@ -219,7 +218,7 @@ enum {
     MORE_TAPS            
 };
 
-static tap dance_state[2];
+static tap dance_state[1];
 
 uint8_t dance_step(tap_dance_state_t *state);
 
@@ -238,8 +237,6 @@ uint8_t dance_step(tap_dance_state_t *state) {
 
 void dance_0_finished(tap_dance_state_t *state, void *user_data);
 void dance_0_reset(tap_dance_state_t *state, void *user_data);
-void dance_1_finished(tap_dance_state_t *state, void *user_data);
-void dance_1_reset(tap_dance_state_t *state, void *user_data);
 
 void dance_0_finished(tap_dance_state_t *state, void *user_data) {
     dance_state[0].step = dance_step(state);
@@ -255,25 +252,8 @@ void dance_0_reset(tap_dance_state_t *state, void *user_data) {
     dance_state[0].step = 0;
 }
 
-void dance_1_finished(tap_dance_state_t *state, void *user_data) {
-    dance_state[1].step = dance_step(state);
-    switch (dance_state[1].step) {
-        case SINGLE_TAP: register_code16(is_caps_word_on() ? S(KC_U) : KC_U); break;
-        case DOUBLE_TAP: caps_word_toggle(); break;
-    }
-}
-
-void dance_1_reset(tap_dance_state_t *state, void *user_data) {
-    wait_ms(10);
-    switch (dance_state[1].step) {
-        case SINGLE_TAP: unregister_code16(is_caps_word_on() ? S(KC_U) : KC_U); break;
-    }
-    dance_state[1].step = 0;
-}
-
 tap_dance_action_t tap_dance_actions[] = {
         [DANCE_0] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, dance_0_finished, dance_0_reset),
-        [DANCE_1] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, dance_1_finished, dance_1_reset),
 };
 
 bool process_record_user_oryx(uint16_t keycode, keyrecord_t *record) {
@@ -366,7 +346,7 @@ bool process_record_user_custom(uint16_t keycode, keyrecord_t *record) {
                     e_l8_registered = false;
                 } else {
                     // was a tap — send E
-                    if (is_caps_word_on()) { tap_code16(S(KC_E)); } else { tap_code(KC_E); }
+                    tap_code(KC_E);
                 }
                 e_l8_held = false;
             }
