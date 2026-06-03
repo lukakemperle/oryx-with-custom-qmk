@@ -13,7 +13,21 @@ custom = ('\n' + main_kc[start:]) if start >= 0 else ''
 
 # Build patched keymap.c from fresh oryx content
 kc = subprocess.check_output(['git', 'show', 'oryx:' + lid + '/keymap.c']).decode()
+
+# Patch 1: add E_L8 to enum custom_keycodes (Oryx does not know this keycode)
+kc = kc.replace('  ST_MACRO_4,\n};', '  ST_MACRO_4,\n  E_L8,\n};')
+
+# Patch 2: rename process_record_user -> process_record_user_oryx
+# so our custom wrapper in the custom section can call it without redefinition
+kc = kc.replace(
+    'bool process_record_user(uint16_t keycode, keyrecord_t *record) {',
+    'bool process_record_user_oryx(uint16_t keycode, keyrecord_t *record) {'
+)
+
+# Patch 3: replace LT(8, KC_E) with E_L8 everywhere (keymap array + combos)
 kc = kc.replace('LT(8, KC_E)', 'E_L8')
+
+# Patch 4: add combo11 (KC_K + KC_L -> TG(9)) for layer-9 exit
 kc = kc.replace(
     'combo_t key_combos[COMBO_COUNT] = {',
     'const uint16_t PROGMEM combo11[] = { KC_K, KC_L, COMBO_END};\n\ncombo_t key_combos[COMBO_COUNT] = {'
@@ -22,6 +36,8 @@ kc = kc.replace(
     '    COMBO(combo10, KC_BSPC),\n};',
     '    COMBO(combo10, KC_BSPC),\n    COMBO(combo11, TG(9)),\n};'
 )
+
+# Append custom section
 kc = kc.rstrip() + custom
 open(lid + '/keymap.c', 'w').write(kc)
 print('keymap.c patched')
