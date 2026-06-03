@@ -258,7 +258,7 @@ void dance_0_reset(tap_dance_state_t *state, void *user_data) {
 void dance_1_finished(tap_dance_state_t *state, void *user_data) {
     dance_state[1].step = dance_step(state);
     switch (dance_state[1].step) {
-        case SINGLE_TAP: register_code16(KC_U); break;
+        case SINGLE_TAP: register_code16(is_caps_word_on() ? S(KC_U) : KC_U); break;
         case DOUBLE_TAP: caps_word_toggle(); break;
     }
 }
@@ -266,7 +266,7 @@ void dance_1_finished(tap_dance_state_t *state, void *user_data) {
 void dance_1_reset(tap_dance_state_t *state, void *user_data) {
     wait_ms(10);
     switch (dance_state[1].step) {
-        case SINGLE_TAP: unregister_code16(KC_U); break;
+        case SINGLE_TAP: unregister_code16(is_caps_word_on() ? S(KC_U) : KC_U); break;
     }
     dance_state[1].step = 0;
 }
@@ -366,7 +366,7 @@ bool process_record_user_custom(uint16_t keycode, keyrecord_t *record) {
                     e_l8_registered = false;
                 } else {
                     // was a tap — send E
-                    tap_code(KC_E);
+                    if (is_caps_word_on()) { tap_code16(S(KC_E)); } else { tap_code(KC_E); }
                 }
                 e_l8_held = false;
             }
