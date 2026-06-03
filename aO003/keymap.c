@@ -21,13 +21,13 @@ enum tap_dance_codes {
   DANCE_1,
 };
 
-#define DUAL_FUNC_0 LT(3, KC_F11)
-#define DUAL_FUNC_1 LT(15, KC_F14)
+#define DUAL_FUNC_0 LT(6, KC_Q)
+#define DUAL_FUNC_1 LT(7, KC_F10)
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT_voyager(
     KC_GRAVE,       KC_1,           KC_2,           KC_3,           KC_4,           KC_5,                                           KC_6,           KC_7,           KC_8,           KC_9,           KC_0,           KC_MINUS,       
-    KC_TAB,         KC_Q,           LT(5, KC_W),    LT(8, KC_E),    LT(7, KC_R),    KC_T,                                           KC_Y,           TD(DANCE_0),    KC_I,           KC_O,           KC_P,           KC_BSLS,        
+    KC_TAB,         LT(11, KC_Q),   LT(5, KC_W),    LT(8, KC_E),    LT(7, KC_R),    KC_T,                                           KC_Y,           TD(DANCE_0),    KC_I,           KC_O,           KC_P,           KC_BSLS,        
     KC_ESCAPE,      MT(MOD_LGUI, KC_A),MT(MOD_LALT, KC_S),MT(MOD_LSFT, KC_D),MT(MOD_LCTL, KC_F),KC_G,                                           KC_H,           MT(MOD_RCTL, KC_J),MT(MOD_RSFT, KC_K),MT(MOD_RALT, KC_L),MT(MOD_RGUI, KC_SCLN),MT(MOD_RCTL | MOD_RSFT | MOD_LALT, KC_QUOTE),
     KC_TRANSPARENT, LT(6, KC_Z),    KC_X,           KC_C,           LT(4, KC_V),    KC_B,                                           KC_N,           KC_M,           KC_COMMA,       KC_DOT,         LT(6, KC_SLASH),KC_EQUAL,       
                                                     LT(1, KC_SPACE),LT(1, KC_BSPC),                                 LT(2, KC_ENTER),KC_SPACE
@@ -100,6 +100,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_TRANSPARENT, RSFT(KC_Q),     RSFT(KC_W),     RSFT(KC_E),     RSFT(KC_R),     RSFT(KC_T),                                     LSFT(KC_Y),     LSFT(KC_U),     RSFT(KC_I),     LSFT(KC_O),     LSFT(KC_P),     KC_TRANSPARENT, 
     TO(0),          RSFT(KC_A),     RSFT(KC_S),     DUAL_FUNC_0,    RSFT(KC_F),     RSFT(KC_G),                                     LSFT(KC_H),     LSFT(KC_J),     DUAL_FUNC_1,    LSFT(KC_L),     KC_TRANSPARENT, KC_TRANSPARENT, 
     KC_TRANSPARENT, RSFT(KC_Z),     RSFT(KC_X),     RSFT(KC_C),     RSFT(KC_V),     RSFT(KC_B),                                     LSFT(KC_N),     LSFT(KC_M),     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, 
+                                                    KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT
+  ),
+  [11] = LAYOUT_voyager(
+    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, 
+    KC_TRANSPARENT, KC_TRANSPARENT, KC_MS_ACCEL0,   KC_MS_ACCEL1,   KC_MS_BTN1,     KC_MS_BTN2,                                     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, 
+    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_MS_LEFT,     KC_MS_DOWN,     KC_MS_UP,       KC_MS_RIGHT,    KC_TRANSPARENT, KC_TRANSPARENT, 
+    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_MS_WH_DOWN,  KC_MS_WH_UP,    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, 
                                                     KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT
   ),
 };
@@ -300,7 +307,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   case QK_MODS ... QK_MODS_MAX:
     // Mouse and consumer keys (volume, media) with modifiers work inconsistently across operating systems,
     // this makes sure that modifiers are always applied to the key that was pressed.
-    if (IS_CONSUMER_KEYCODE(QK_MODS_GET_BASIC_KEYCODE(keycode))) {
+    if (IS_MOUSE_KEYCODE(QK_MODS_GET_BASIC_KEYCODE(keycode)) || IS_CONSUMER_KEYCODE(QK_MODS_GET_BASIC_KEYCODE(keycode))) {
       if (record->event.pressed) {
         add_mods(QK_MODS_GET_MODS(keycode));
         send_keyboard_report();
