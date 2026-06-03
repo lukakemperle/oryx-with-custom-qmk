@@ -21,6 +21,8 @@ enum tap_dance_codes {
   DANCE_1,
 };
 
+#define DUAL_FUNC_0 LT(14, KC_H)
+#define DUAL_FUNC_1 LT(3, KC_F19)
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT_voyager(
@@ -95,9 +97,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
   [10] = LAYOUT_voyager(
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, 
-    KC_TRANSPARENT, MT(MOD_RSFT, KC_Q),MT(MOD_RSFT, KC_W),MT(MOD_RSFT, KC_E),MT(MOD_RSFT, KC_R),MT(MOD_RSFT, KC_T),                                MT(MOD_LSFT, KC_Y),MT(MOD_LSFT, KC_U),MT(MOD_LSFT, KC_I),MT(MOD_LSFT, KC_O),MT(MOD_LCTL, KC_P),KC_TRANSPARENT, 
-    KC_TRANSPARENT, MT(MOD_RSFT, KC_A),MT(MOD_RSFT, KC_S),MT(MOD_RSFT, KC_D),MT(MOD_RSFT, KC_F),MT(MOD_RSFT, KC_Z),                                MT(MOD_LSFT, KC_H),MT(MOD_LSFT, KC_J),MT(MOD_LSFT, KC_K),MT(MOD_LSFT, KC_L),KC_TRANSPARENT, KC_TRANSPARENT, 
-    KC_TRANSPARENT, MT(MOD_RSFT, KC_Z),MT(MOD_RSFT, KC_X),MT(MOD_RSFT, KC_C),MT(MOD_RSFT, KC_V),MT(MOD_RSFT, KC_B),                                MT(MOD_LSFT, KC_N),MT(MOD_LSFT, KC_M),KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, 
+    KC_TRANSPARENT, RSFT(KC_Q),     RSFT(KC_W),     RSFT(KC_E),     RSFT(KC_R),     RSFT(KC_T),                                     LSFT(KC_Y),     LSFT(KC_U),     RSFT(KC_I),     LSFT(KC_O),     LSFT(KC_P),     KC_TRANSPARENT, 
+    TO(0),          RSFT(KC_A),     RSFT(KC_A),     DUAL_FUNC_0,    RSFT(KC_F),     RSFT(KC_G),                                     LSFT(KC_H),     LSFT(KC_J),     DUAL_FUNC_1,    LSFT(KC_L),     KC_TRANSPARENT, KC_TRANSPARENT, 
+    KC_TRANSPARENT, RSFT(KC_Z),     RSFT(KC_X),     RSFT(KC_C),     RSFT(KC_V),     RSFT(KC_B),                                     LSFT(KC_N),     LSFT(KC_M),     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, 
                                                     KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT
   ),
 };
@@ -337,6 +339,36 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     }
     break;
 
+    case DUAL_FUNC_0:
+      if (record->tap.count > 0) {
+        if (record->event.pressed) {
+          register_code16(RSFT(KC_D));
+        } else {
+          unregister_code16(RSFT(KC_D));
+        }
+      } else {
+        if (record->event.pressed) {
+          register_code16(KC_LEFT_SHIFT);
+        } else {
+          unregister_code16(KC_LEFT_SHIFT);
+        }  
+      }  
+      return false;
+    case DUAL_FUNC_1:
+      if (record->tap.count > 0) {
+        if (record->event.pressed) {
+          register_code16(LSFT(KC_K));
+        } else {
+          unregister_code16(LSFT(KC_K));
+        }
+      } else {
+        if (record->event.pressed) {
+          register_code16(KC_RIGHT_SHIFT);
+        } else {
+          unregister_code16(KC_RIGHT_SHIFT);
+        }  
+      }  
+      return false;
     case RGB_SLD:
       if (record->event.pressed) {
         rgblight_mode(1);
