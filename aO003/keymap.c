@@ -448,17 +448,21 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 // CUSTOM QMK — do not edit above this line with Oryx changes
 // ============================================================
 
-// KL_L9: combo KL toggles layer 9.
-// Opt+F16 = show overlay (Mouseless shortcut).
-// Opt+Shift+F16 = hide overlay (Mouseless shortcut).
+// Layer 9 (gaming, combo k+l): tap Opt+F16 on enter, Opt+Shift+F16 on exit
+// to show/hide the Mouseless overlay.
+// Layer 11 (mouse, hold E): hold F15 while active so Mouseless stays in free
+// mode; release F15 on layer exit.
 // Taps are deferred to matrix_scan_user so layer_state_set_user stays side-effect free.
 
-static bool kl_l9_active    = false;
-static bool kl_l9_send_show = false;
-static bool kl_l9_send_hide = false;
+static bool kl_l9_active     = false;
+static bool kl_l9_send_show  = false;
+static bool kl_l9_send_hide  = false;
+static bool msls_free_active = false;
 
 layer_state_t layer_state_set_user(layer_state_t state) {
-    bool l9_now = (state >> 9) & 1;
+    bool l9_now  = (state >> 9)  & 1;
+    bool l11_now = (state >> 11) & 1;
+
     if (l9_now && !kl_l9_active) {
         kl_l9_send_show = true;
         kl_l9_active    = true;
@@ -466,6 +470,15 @@ layer_state_t layer_state_set_user(layer_state_t state) {
         kl_l9_send_hide = true;
         kl_l9_active    = false;
     }
+
+    if (l11_now && !msls_free_active) {
+        msls_free_active = true;
+        register_code(KC_F15);
+    } else if (!l11_now && msls_free_active) {
+        msls_free_active = false;
+        unregister_code(KC_F15);
+    }
+
     return state;
 }
 
