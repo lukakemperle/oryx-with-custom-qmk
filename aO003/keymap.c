@@ -461,7 +461,7 @@ static bool msls_free_active = false;
 
 layer_state_t layer_state_set_user(layer_state_t state) {
     bool l9_now  = (state >> 9)  & 1;
-    bool l11_now = (state >> 11) & 1;
+    bool l8_now  = (state >> 8)  & 1;
 
     if (l9_now && !kl_l9_active) {
         kl_l9_send_show = true;
@@ -471,10 +471,10 @@ layer_state_t layer_state_set_user(layer_state_t state) {
         kl_l9_active    = false;
     }
 
-    if (l11_now && !msls_free_active) {
+    if (l8_now && !msls_free_active) {
         msls_free_active = true;
         register_code(KC_F15);
-    } else if (!l11_now && msls_free_active) {
+    } else if (!l8_now && msls_free_active) {
         msls_free_active = false;
         unregister_code(KC_F15);
     }
