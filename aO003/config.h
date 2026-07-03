@@ -30,7 +30,7 @@
 
 #define SERIAL_NUMBER "aO003/7vmzNY"
 #define LAYER_STATE_16BIT
-#define COMBO_COUNT 14
+#define COMBO_COUNT 13
 
 #define RGB_MATRIX_STARTUP_SPD 60
 
