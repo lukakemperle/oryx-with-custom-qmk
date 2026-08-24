@@ -21,8 +21,8 @@ enum tap_dance_codes {
   DANCE_1,
 };
 
-#define DUAL_FUNC_0 LT(5, KC_F19)
-#define DUAL_FUNC_1 LT(10, KC_A)
+#define DUAL_FUNC_0 LT(7, KC_F23)
+#define DUAL_FUNC_1 LT(7, KC_G)
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT_voyager(
@@ -152,7 +152,7 @@ combo_t key_combos[COMBO_COUNT] = {
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case MT(MOD_LALT, KC_S):
-            return TAPPING_TERM -45;
+            return TAPPING_TERM -25;
         default:
             return TAPPING_TERM;
     }
