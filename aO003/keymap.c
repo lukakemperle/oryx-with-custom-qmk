@@ -18,11 +18,12 @@ enum custom_keycodes {
 enum tap_dance_codes {
   DANCE_0,
   DANCE_1,
+  DANCE_2,
 };
 
-#define DUAL_FUNC_0 LT(8, KC_R)
-#define DUAL_FUNC_1 LT(1, KC_F12)
-#define DUAL_FUNC_2 LT(4, KC_S)
+#define DUAL_FUNC_0 LT(5, KC_4)
+#define DUAL_FUNC_1 LT(15, KC_I)
+#define DUAL_FUNC_2 LT(13, KC_F1)
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT_voyager(
@@ -116,6 +117,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_TRANSPARENT, KC_TRANSPARENT, LGUI(KC_F13),   LCTL(KC_F13),   LSFT(KC_F13),   KC_F13,                                         KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, 
                                                     KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT
   ),
+  [13] = LAYOUT_voyager(
+    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, 
+    KC_TRANSPARENT, KC_Q,           KC_W,           KC_E,           KC_R,           KC_T,                                           KC_Y,           KC_U,           KC_I,           KC_O,           KC_P,           KC_TRANSPARENT, 
+    MT(MOD_LALT, KC_ESCAPE),KC_A,           KC_S,           KC_D,           KC_F,           KC_G,                                           KC_H,           KC_J,           KC_K,           KC_L,           KC_SCLN,        KC_TRANSPARENT, 
+    KC_TRANSPARENT, KC_Z,           KC_X,           KC_C,           KC_V,           KC_B,                                           KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, TD(DANCE_2),    
+                                                    KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT
+  ),
 };
 
 
@@ -123,26 +131,24 @@ const uint16_t PROGMEM combo0[] = { LT(6, KC_Z), KC_X, COMBO_END};
 const uint16_t PROGMEM combo1[] = { KC_X, KC_C, COMBO_END};
 const uint16_t PROGMEM combo2[] = { KC_C, LT(4, KC_V), COMBO_END};
 const uint16_t PROGMEM combo3[] = { LT(4, KC_V), KC_B, COMBO_END};
-const uint16_t PROGMEM combo4[] = { MT(MOD_LCTL, KC_F), MT(MOD_RCTL, KC_J), COMBO_END};
-const uint16_t PROGMEM combo5[] = { MT(MOD_LSFT, KC_D), MT(MOD_RSFT, KC_K), COMBO_END};
-const uint16_t PROGMEM combo6[] = { MT(MOD_LALT, KC_S), MT(MOD_LSFT, KC_D), COMBO_END};
-const uint16_t PROGMEM combo7[] = { MT(MOD_RSFT, KC_K), MT(MOD_RALT, KC_L), COMBO_END};
-const uint16_t PROGMEM combo8[] = { LT(7, KC_R), LT(8, KC_E), COMBO_END};
-const uint16_t PROGMEM combo9[] = { KC_Q, KC_W, COMBO_END};
-const uint16_t PROGMEM combo10[] = { MT(MOD_LCTL, KC_F), MT(MOD_LSFT, KC_D), COMBO_END};
+const uint16_t PROGMEM combo4[] = { MT(MOD_LALT, KC_S), MT(MOD_LSFT, KC_D), COMBO_END};
+const uint16_t PROGMEM combo5[] = { KC_Q, LT(7, KC_R), COMBO_END};
+const uint16_t PROGMEM combo6[] = { MT(MOD_LCTL, KC_F), MT(MOD_RCTL, KC_J), COMBO_END};
+const uint16_t PROGMEM combo7[] = { MT(MOD_LCTL, KC_F), MT(MOD_LSFT, KC_D), COMBO_END};
+const uint16_t PROGMEM combo8[] = { MT(MOD_LSFT, KC_D), MT(MOD_RSFT, KC_K), COMBO_END};
+const uint16_t PROGMEM combo9[] = { MT(MOD_RSFT, KC_K), MT(MOD_RALT, KC_L), COMBO_END};
 
 combo_t key_combos[COMBO_COUNT] = {
     COMBO(combo0, LGUI(KC_Z)),
     COMBO(combo1, RGUI(KC_X)),
     COMBO(combo2, RGUI(KC_C)),
     COMBO(combo3, RGUI(KC_V)),
-    COMBO(combo4, KC_ENTER),
-    COMBO(combo5, LALT(LGUI(LCTL(KC_G)))),
-    COMBO(combo6, KC_ESCAPE),
-    COMBO(combo7, TG(9)),
-    COMBO(combo8, LGUI(LCTL(KC_F19))),
-    COMBO(combo9, KC_ENTER),
-    COMBO(combo10, KC_SPACE),
+    COMBO(combo4, KC_ESCAPE),
+    COMBO(combo5, KC_ENTER),
+    COMBO(combo6, KC_ENTER),
+    COMBO(combo7, KC_SPACE),
+    COMBO(combo8, LALT(LGUI(LCTL(KC_G)))),
+    COMBO(combo9, TG(9)),
 };
 
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
@@ -261,7 +267,7 @@ enum {
     MORE_TAPS            
 };
 
-static tap dance_state[2];
+static tap dance_state[3];
 
 uint8_t dance_step(tap_dance_state_t *state);
 
@@ -343,10 +349,27 @@ void dance_1_reset(tap_dance_state_t *state, void *user_data) {
     }
     dance_state[1].step = 0;
 }
+void dance_2_finished(tap_dance_state_t *state, void *user_data);
+void dance_2_reset(tap_dance_state_t *state, void *user_data);
+
+void dance_2_finished(tap_dance_state_t *state, void *user_data) {
+    dance_state[2].step = dance_step(state);
+    switch (dance_state[2].step) {
+        case DOUBLE_TAP: layer_move(0); break;
+    }
+}
+
+void dance_2_reset(tap_dance_state_t *state, void *user_data) {
+    wait_ms(10);
+    switch (dance_state[2].step) {
+    }
+    dance_state[2].step = 0;
+}
 
 tap_dance_action_t tap_dance_actions[] = {
         [DANCE_0] = ACTION_TAP_DANCE_FN_ADVANCED(on_dance_0, dance_0_finished, dance_0_reset),
         [DANCE_1] = ACTION_TAP_DANCE_FN_ADVANCED(on_dance_1, dance_1_finished, dance_1_reset),
+        [DANCE_2] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, dance_2_finished, dance_2_reset),
 };
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
