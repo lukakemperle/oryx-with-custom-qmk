@@ -21,16 +21,17 @@ enum tap_dance_codes {
   DANCE_2,
 };
 
-#define DUAL_FUNC_0 LT(7, KC_O)
-#define DUAL_FUNC_1 LT(8, KC_G)
-#define DUAL_FUNC_2 LT(4, KC_F4)
+#define DUAL_FUNC_0 LT(13, KC_A)
+#define DUAL_FUNC_1 LT(10, KC_G)
+#define DUAL_FUNC_2 LT(4, KC_H)
+#define DUAL_FUNC_3 LT(8, KC_F21)
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT_voyager(
     KC_GRAVE,       KC_1,           KC_2,           KC_3,           KC_4,           KC_5,                                           KC_6,           KC_7,           KC_8,           KC_9,           KC_0,           KC_MINUS,       
     KC_TAB,         KC_Q,           KC_W,           LT(8, KC_E),    LT(7, KC_R),    KC_T,                                           KC_Y,           TD(DANCE_1),    KC_I,           KC_O,           KC_P,           KC_BSLS,        
     TD(DANCE_0),    MT(MOD_LGUI, KC_A),MT(MOD_LALT, KC_S),MT(MOD_LSFT, KC_D),MT(MOD_LCTL, KC_F),KC_G,                                           KC_H,           MT(MOD_RCTL, KC_J),MT(MOD_RSFT, KC_K),MT(MOD_RALT, KC_L),MT(MOD_RGUI, KC_SCLN),MT(MOD_RCTL | MOD_RSFT | MOD_LALT, KC_QUOTE),
-    LCTL(LSFT(KC_F13)),LT(6, KC_Z),    KC_X,           KC_C,           LT(4, KC_V),    KC_B,                                           KC_N,           KC_M,           KC_COMMA,       KC_DOT,         LT(6, KC_SLASH),KC_EQUAL,       
+    KC_MEH,         LT(6, KC_Z),    KC_X,           KC_C,           LT(4, KC_V),    KC_B,                                           KC_N,           KC_M,           KC_COMMA,       KC_DOT,         LT(6, KC_SLASH),KC_EQUAL,       
                                                     LT(1, KC_SPACE),LT(12, KC_BSPC),                                LT(2, KC_ENTER),KC_SPACE
   ),
   [1] = LAYOUT_voyager(
@@ -77,8 +78,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
   [7] = LAYOUT_voyager(
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, 
-    KC_TRANSPARENT, RSFT(KC_F19),   RCTL(KC_F19),   LALT(LCTL(LSFT(KC_F20))),KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_F19,         LALT(LCTL(KC_F19)),LALT(LGUI(LCTL(KC_F19))),LCTL(LSFT(KC_F19)),LALT(LSFT(KC_F19)),KC_TRANSPARENT, 
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,                                 RALT(RGUI(KC_F19)),LALT(LSFT(KC_F20)),LCTL(LSFT(KC_F20)),RGUI(RSFT(KC_F19)),KC_TRANSPARENT, KC_TRANSPARENT, 
+    KC_TRANSPARENT, RSFT(KC_F19),   RCTL(KC_F19),   LALT(LCTL(LSFT(KC_F20))),KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_F19,         KC_LEFT_GUI,    LALT(LGUI(LCTL(KC_F19))),LCTL(LSFT(KC_F19)),KC_LEFT_GUI,    KC_TRANSPARENT, 
+    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,                                 DUAL_FUNC_1,    LALT(LSFT(KC_F20)),LCTL(LSFT(KC_F20)),RGUI(RSFT(KC_F19)),KC_TRANSPARENT, KC_TRANSPARENT, 
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, 
                                                     KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT
   ),
@@ -99,7 +100,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [10] = LAYOUT_voyager(
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, 
     KC_TRANSPARENT, RSFT(KC_Q),     RSFT(KC_W),     RSFT(KC_E),     RSFT(KC_R),     RSFT(KC_T),                                     LSFT(KC_Y),     LSFT(KC_U),     RSFT(KC_I),     LSFT(KC_O),     LSFT(KC_P),     KC_TRANSPARENT, 
-    TO(0),          RSFT(KC_A),     RSFT(KC_S),     DUAL_FUNC_1,    RSFT(KC_F),     RSFT(KC_G),                                     LSFT(KC_H),     LSFT(KC_J),     DUAL_FUNC_2,    LSFT(KC_L),     KC_TRANSPARENT, KC_TRANSPARENT, 
+    TO(0),          RSFT(KC_A),     RSFT(KC_S),     DUAL_FUNC_2,    RSFT(KC_F),     RSFT(KC_G),                                     LSFT(KC_H),     LSFT(KC_J),     DUAL_FUNC_3,    LSFT(KC_L),     KC_TRANSPARENT, KC_TRANSPARENT, 
     KC_TRANSPARENT, RSFT(KC_Z),     RSFT(KC_X),     RSFT(KC_C),     RSFT(KC_V),     RSFT(KC_B),                                     LSFT(KC_N),     LSFT(KC_M),     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, 
                                                     KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT
   ),
@@ -153,6 +154,8 @@ combo_t key_combos[COMBO_COUNT] = {
 
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
+        case TD(DANCE_0):
+            return TAPPING_TERM + 75;
         case MT(MOD_LALT, KC_S):
             return TAPPING_TERM -25;
         default:
@@ -429,6 +432,21 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     case DUAL_FUNC_1:
       if (record->tap.count > 0) {
         if (record->event.pressed) {
+          register_code16(KC_RIGHT_GUI);
+        } else {
+          unregister_code16(KC_RIGHT_GUI);
+        }
+      } else {
+        if (record->event.pressed) {
+          register_code16(KC_LEFT_CTRL);
+        } else {
+          unregister_code16(KC_LEFT_CTRL);
+        }  
+      }  
+      return false;
+    case DUAL_FUNC_2:
+      if (record->tap.count > 0) {
+        if (record->event.pressed) {
           register_code16(RSFT(KC_D));
         } else {
           unregister_code16(RSFT(KC_D));
@@ -441,7 +459,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         }  
       }  
       return false;
-    case DUAL_FUNC_2:
+    case DUAL_FUNC_3:
       if (record->tap.count > 0) {
         if (record->event.pressed) {
           register_code16(LSFT(KC_K));
