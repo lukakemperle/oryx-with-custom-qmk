@@ -554,10 +554,13 @@ static bool cs_is_ctrl(uint16_t kc) {
 bool pre_process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (cs_is_space(keycode)) {
         if (record->event.pressed) {
-            if (get_mods() & MOD_MASK_CTRL) {
+            // After the first tap Ctrl is no longer in get_mods() (we dropped it), so the
+            // switcher being open (cs_cmd_held) must count as "Ctrl held" for later taps.
+            if (cs_cmd_held || (get_mods() & MOD_MASK_CTRL)) {
                 if (!cs_cmd_held) {
                     del_mods(MOD_MASK_CTRL);
                     register_code(KC_LEFT_GUI);
+                    wait_ms(20);  // let macOS see Cmd down before the first Tab
                     cs_cmd_held = true;
                 }
                 tap_code(KC_TAB);
