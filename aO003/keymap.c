@@ -530,6 +530,50 @@ void matrix_scan_user(void) {
         tap_code16(LALT(LSFT(KC_F16)));
     }
 }
+// Ctrl+Space = macOS app switcher (Cmd+Tab). Hold Ctrl (homerow F or J), tap Space:
+// Ctrl is dropped from the report, Cmd is held and Tab tapped; every further Space tap
+// is another Tab (Shift held = backwards). Releasing Ctrl releases Cmd and commits
+// the switch. Lives in pre_process_record_user so it sees Space BEFORE QMK's tap/hold
+// logic (the left thumb is LT(1, KC_SPACE)); Oryx's process_record_user is untouched.
+// Ctrl must be dropped: Ctrl+Cmd+Tab is OmniWM's "focus next display".
+
+static bool     cs_cmd_held    = false;  // Cmd currently registered by us
+static uint16_t cs_swallow_key = KC_NO;  // Space keycode whose release we still owe a swallow
+
+static bool cs_is_space(uint16_t kc) {
+    return kc == KC_SPACE || (IS_QK_LAYER_TAP(kc) && QK_LAYER_TAP_GET_TAP_KEYCODE(kc) == KC_SPACE);
+}
+
+// Any key that produces Ctrl: plain Ctrl, or a mod-tap whose mods include Ctrl
+// (QK_MOD_TAP_GET_MODS is the 5-bit form: bit 0 = Ctrl for both hands, bit 4 = right hand).
+static bool cs_is_ctrl(uint16_t kc) {
+    return kc == KC_LEFT_CTRL || kc == KC_RIGHT_CTRL ||
+           (IS_QK_MOD_TAP(kc) && (QK_MOD_TAP_GET_MODS(kc) & MOD_LCTL));
+}
+
+bool pre_process_record_user(uint16_t keycode, keyrecord_t *record) {
+    if (cs_is_space(keycode)) {
+        if (record->event.pressed) {
+            if (get_mods() & MOD_MASK_CTRL) {
+                if (!cs_cmd_held) {
+                    del_mods(MOD_MASK_CTRL);
+                    register_code(KC_LEFT_GUI);
+                    cs_cmd_held = true;
+                }
+                tap_code(KC_TAB);
+                cs_swallow_key = keycode;
+                return false;
+            }
+        } else if (keycode == cs_swallow_key) {
+            cs_swallow_key = KC_NO;
+            return false;
+        }
+    } else if (cs_cmd_held && !record->event.pressed && cs_is_ctrl(keycode)) {
+        unregister_code(KC_LEFT_GUI);
+        cs_cmd_held = false;
+    }
+    return true;
+}
 // ============================================================
 // END CUSTOM QMK
 // ============================================================
